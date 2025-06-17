@@ -1,0 +1,2 @@
+/home/shakil/StudioProjects/cash-rocket-full-app-codecanyon-update/android/app/.cxx/Debug/l65dg604/x86_64/CMakeFiles/edit_cache.dir
+/home/shakil/StudioProjects/cash-rocket-full-app-codecanyon-update/android/app/.cxx/Debug/l65dg604/x86_64/CMakeFiles/rebuild_cache.dir

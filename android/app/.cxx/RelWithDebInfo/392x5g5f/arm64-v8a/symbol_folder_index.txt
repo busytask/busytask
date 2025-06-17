@@ -1,0 +1,1 @@
+/home/shakil/StudioProjects/cash-rocket-full-app-codecanyon-update/build/app/intermediates/cxx/RelWithDebInfo/392x5g5f/obj/arm64-v8a

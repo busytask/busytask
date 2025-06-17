@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "379243505940",
+    "project_id": "cash-rocket-1938d",
+    "storage_bucket": "cash-rocket-1938d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379243505940:android:1985a76a2806344ed53a01",
+        "android_client_info": {
+          "package_name": "com.maantheme.cash_rocket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379243505940-tk58gugj072jkrpkf4pi43a62a1itka9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3Od7B6uoSL00aLDA18vX9cIrQXXMFyA4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379243505940-9mk9ue9aj6n2dvo87fal5639962m5rcr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "379243505940-6eu8rj8vi0gmqm45td71kojcn3bta9ho.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.maantheme.cashRocket"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
