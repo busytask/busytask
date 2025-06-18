@@ -30,7 +30,7 @@ const String iOSApiKey = 'IOS_API_KEY';
 const bool releaseMode = false;
 
 //Bitlab Integration
-const String appToken = '0d08c9e5-d910-4b5a-b323-60ad35784f4b';
+const String appToken = 'c8e0bc5a-49de-4569-b789-94a407a67de6';
 
 //inbrain integration
 const String inbrainUrl = 'https://www.surveyb.in/configuration?params=d09LZVE4eXduR3RNZzRNbDRQbTJ2TWNESVVkbXdtcmRsTDNhTkw2N29OY29GZmJab2NoT1h1T2ZDU1Q4akxldUJCSVpCY3pPeXpiQUtjSitnenNrZW9sU20zSGxuTlFNR0dvSFdlRGVGa1AzWHYrZnBERTVCTWRSSzVRY3VsSnE5bGV0Y1pUSnlGMjdZdGUyVEJBZk9SZ3lTc1pPWll3cUdPQlBKV3FJL0JWcDJkYktKQUdEWHhNRGNYNlFwNWVuV0ZWSlNFQzFnZW9LeEdlRXdibFk5MmVOelRacVB5Y2tQNnBQUEtyU3NYQT0app_uid=';
