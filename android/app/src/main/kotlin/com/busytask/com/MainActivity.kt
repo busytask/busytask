@@ -1,4 +1,4 @@
-package com.busy.task
+package com.busytask.com
 
 import io.flutter.embedding.android.FlutterActivity
 

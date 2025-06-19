@@ -50,7 +50,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA4_wKyrD37YQho1oV9eOYMkBzTJyl9BME',
-    appId: '1:1064387449653:android:9842f2d62bdc720e7b727c',
+    appId: '1:1064387449653:android:d9a1a7830a7a3d0f7b727c',
     messagingSenderId: '1064387449653',
     projectId: 'busy-task',
     storageBucket: 'busy-task.firebasestorage.app',
@@ -58,12 +58,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBK94g_4TPh8l9ZGQVK0gb0xVHg-aM-l_c',
-    appId: '1:1064387449653:ios:a0bbe83db11d134b7b727c',
+    appId: '1:1064387449653:ios:8eac5c1c475f38997b727c',
     messagingSenderId: '1064387449653',
     projectId: 'busy-task',
     storageBucket: 'busy-task.firebasestorage.app',
-    iosClientId: '1064387449653-8oc6a4fceg8ad7epkj6h3q5ic6pqlbnt.apps.googleusercontent.com',
-    iosBundleId: 'com.busy.task',
+    iosClientId: '1064387449653-bhelr3m2hmmkt56sd3ufh3t5ig8tndbt.apps.googleusercontent.com',
+    iosBundleId: 'com.busytask.com',
   );
 
 }
