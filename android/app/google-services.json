@@ -12,7 +12,12 @@
           "package_name": "com.busy.task"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1064387449653-ihi5du2est17aftu0vgduhcg0lf15ffa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA4_wKyrD37YQho1oV9eOYMkBzTJyl9BME"
@@ -20,7 +25,20 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1064387449653-ihi5du2est17aftu0vgduhcg0lf15ffa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1064387449653-8oc6a4fceg8ad7epkj6h3q5ic6pqlbnt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.busy.task",
+                "app_store_id": "205498706"
+              }
+            }
+          ]
         }
       }
     }

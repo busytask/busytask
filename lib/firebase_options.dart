@@ -62,6 +62,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1064387449653',
     projectId: 'busy-task',
     storageBucket: 'busy-task.firebasestorage.app',
+    iosClientId: '1064387449653-8oc6a4fceg8ad7epkj6h3q5ic6pqlbnt.apps.googleusercontent.com',
     iosBundleId: 'com.busy.task',
   );
 
