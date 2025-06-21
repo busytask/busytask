@@ -1,5 +1,4 @@
-import 'dart:io' show Platform;
-
+import 'package:flutter/foundation.dart' show kIsWeb; // For web platform check
 import 'package:cash_rocket/Repositories/authentication_repo.dart';
 import 'package:cash_rocket/Screen/Authentication/log_in.dart';
 import 'package:cash_rocket/constant%20app%20information/const_information.dart';
@@ -9,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
+// Conditionally import dart:io only for non-web platforms
+import 'dart:io' show Platform if (dart.library.html) '';
 
 import '../../Constant Data/constant.dart';
 import '../../Constant Data/global_contanier.dart';
@@ -88,10 +90,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
-                Text(
-                  appsName,
-                  style: kTextStyle.copyWith(color: kWhite, fontWeight: FontWeight.bold),
-                ),
+                Text (appsName, style: kTextStyle.copyWith(color: kWhite, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 30.0),
                 Text(
                   lang.S.of(context).letsGetStarted,
@@ -130,10 +129,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 const SizedBox(height: 13),
                 GestureDetector(
                   onTap: () async {
-                    // Gọi hàm đăng nhập với tài khoản Google khác
                     User? user = await signInWithDifferentGoogleAccount();
                     if (user != null) {
-                      String email = user.email ?? 'default_email@example.com'; // Cải tiến khi email là null
+                      String email = user.email ?? 'default_email@example.com';
                       await AuthRepo().signInWithGoogle(email, context);
                     }
                   },
@@ -160,12 +158,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
-
                 ///______Apple_login_____________________________
                 const SizedBox(height: 13),
                 GestureDetector(
                   onTap: () async {
-                    if (Platform.isIOS) {
+                    if (kIsWeb) {
+                      EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
+                    } else if (Platform.isIOS) {
                       try {
                         AuthorizationCredentialAppleID credential = await SignInWithApple.getAppleIDCredential(
                           scopes: [
@@ -178,11 +177,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         EasyLoading.showError("Lỗi đăng nhập với Apple: $e");
                       }
                     } else {
-                      EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
+                      EasyLoading.showError(lang15.S.of(context).appleLoginWillWorkOnAppleDevises);
                     }
                   },
-                  child: Container(
-                    alignment: Alignment.center,
+                  child: Container route: Alignment.center,
                     height: 48,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
