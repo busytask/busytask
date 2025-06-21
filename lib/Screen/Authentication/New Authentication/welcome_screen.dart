@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb; // For web platform check
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cash_rocket/Repositories/authentication_repo.dart';
 import 'package:cash_rocket/Screen/Authentication/log_in.dart';
 import 'package:cash_rocket/constant%20app%20information/const_information.dart';
@@ -8,9 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-
-// Conditionally import dart:io only for non-web platforms
-import 'dart:io' show Platform if (dart.library.html) '';
 
 import '../../Constant Data/constant.dart';
 import '../../Constant Data/global_contanier.dart';
@@ -29,7 +26,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
       if (googleSignInAccount == null) {
         EasyLoading.showError("Đăng nhập với Google thất bại hoặc bị hủy.");
-        return null; // Người dùng đã hủy đăng nhập
+        return null;
       }
 
       final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
@@ -72,6 +69,31 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     }
   }
 
+  // Đăng nhập với Apple
+  Future<void> signInWithApple() async {
+    if (kIsWeb) {
+      EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
+      return;
+    }
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: credential.identityToken,
+        accessToken: credential.authorizationCode,
+      );
+      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      // Optionally call AuthRepo if needed
+      await AuthRepo().signInWithApple(credential.userIdentifier!, context);
+    } catch (e) {
+      EasyLoading.showError("Lỗi đăng nhập với Apple: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -90,7 +112,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
-                Text (appsName, style: kTextStyle.copyWith(color: kWhite, fontWeight: FontWeight.bold)),
+                Text(
+                  appsName,
+                  style: kTextStyle.copyWith(color: kWhite, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 30.0),
                 Text(
                   lang.S.of(context).letsGetStarted,
@@ -158,29 +183,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
-                ///______Apple_login_____________________________
                 const SizedBox(height: 13),
                 GestureDetector(
-                  onTap: () async {
-                    if (kIsWeb) {
-                      EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
-                    } else if (Platform.isIOS) {
-                      try {
-                        AuthorizationCredentialAppleID credential = await SignInWithApple.getAppleIDCredential(
-                          scopes: [
-                            AppleIDAuthorizationScopes.email,
-                            AppleIDAuthorizationScopes.fullName,
-                          ],
-                        );
-                        await AuthRepo().signInWithGoogle(credential.userIdentifier!, context);
-                      } catch (e) {
-                        EasyLoading.showError("Lỗi đăng nhập với Apple: $e");
-                      }
-                    } else {
-                      EasyLoading.showError(lang15.S.of(context).appleLoginWillWorkOnAppleDevises);
-                    }
-                  },
-                  child: Container route: Alignment.center,
+                  onTap: signInWithApple,
+                  child: Container(
+                    alignment: Alignment.center,
                     height: 48,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -189,15 +196,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     child: ListTile(
                       visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                      leading: Image.asset(
-                        'images/apple_logo.png',
-                        height: 25,
-                        width: 25,
-                      ),
-                      title: Text(
-                        lang.S.of(context).continueWithApple,
-                        style: const TextStyle(color: kWhite, fontWeight: FontWeight.w500),
+                     -FontWeight.w500),
                       ),
                     ),
                   ),
