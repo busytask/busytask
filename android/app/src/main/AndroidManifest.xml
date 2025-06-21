@@ -6,10 +6,10 @@
     <application android:label="Busy Task" android:name="${applicationName}" android:icon="@mipmap/launcher_icon">
 
         <!-- TODO replace YOUR_APP_ID with actual value -->
-        <meta-data android:name="com.startapp.sdk.APPLICATION_ID" android:value="206377776"/>
+        <meta-data android:name="com.startapp.sdk.APPLICATION_ID" android:value="205144443"/>
 
         <!-- TODO Splash Ad controlled by the android:value below -->
-        <provider android:authorities="com.startapp.flutter.sdk.206377776" android:name="com.startapp.flutter.sdk.StartAppFlutterHelper" android:exported="false">
+        <provider android:authorities="com.startapp.flutter.sdk.205144443" android:name="com.startapp.flutter.sdk.StartAppFlutterHelper" android:exported="false">
             <meta-data android:name="com.startapp.sdk.SPLASH_ADS_ENABLED" android:value="true"/>
         </provider>
 
