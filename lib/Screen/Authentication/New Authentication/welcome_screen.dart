@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show Platform;
+
 import 'package:cash_rocket/Repositories/authentication_repo.dart';
 import 'package:cash_rocket/Screen/Authentication/log_in.dart';
 import 'package:cash_rocket/constant%20app%20information/const_information.dart';
@@ -21,82 +22,36 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   Future<User?> signInWithDifferentGoogleAccount() async {
-    try {
-      final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
-      if (googleSignInAccount == null) {
-        EasyLoading.showError("Đăng nhập với Google bị hủy.");
-        return null;
-      }
+    final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount?.authentication;
 
-      final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication?.accessToken,
+      idToken: googleSignInAuthentication?.idToken,
+    );
 
-      if (googleSignInAuthentication == null) {
-        EasyLoading.showError("Không thể lấy thông tin xác thực Google.");
-        return null;
-      }
+    final UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
 
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
+    final User? user = authResult.user;
 
-      final UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
-      return authResult.user;
-    } catch (e) {
-      EasyLoading.showError("Lỗi đăng nhập với Google: $e");
-      return null;
-    }
+    return user;
   }
 
-  Future<UserCredential?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        EasyLoading.showError("Đăng nhập với Google bị hủy.");
-        return null;
-      }
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      final GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
-      if (googleAuth == null) {
-        EasyLoading.showError("Không thể lấy thông tin xác thực Google.");
-        return null;
-      }
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
 
-      return await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      EasyLoading.showError("Lỗi đăng nhập Google: $e");
-      return null;
-    }
-  }
-
-  Future<void> signInWithApple() async {
-    if (kIsWeb) {
-      EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
-      return;
-    }
-    try {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-      );
-      final oauthCredential = OAuthProvider("apple.com").credential(
-        idToken: credential.identityToken,
-        accessToken: credential.authorizationCode,
-      );
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      if (userCredential.user != null) {
-        await AuthRepo().signInWithApple(credential.userIdentifier!, context);
-      }
-    } catch (e) {
-      EasyLoading.showError("Lỗi đăng nhập với Apple: $e");
-    }
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
@@ -159,9 +114,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 const SizedBox(height: 13),
                 GestureDetector(
                   onTap: () async {
-                    final user = await signInWithDifferentGoogleAccount();
+                    // await signInWithGoogle();
+                    User? user = await signInWithDifferentGoogleAccount();
                     if (user != null) {
-                      final email = user.email ?? 'default_email@example.com';
+                      String email = user.email!;
                       await AuthRepo().signInWithGoogle(email, context);
                     }
                   },
@@ -188,9 +144,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
+
+                ///______Apple_login_____________________________
                 const SizedBox(height: 13),
                 GestureDetector(
-                  onTap: signInWithApple,
+                  onTap: () async {
+                    if (Platform.isIOS) {
+                      AuthorizationCredentialAppleID credential = await SignInWithApple.getAppleIDCredential(
+                        scopes: [
+                          AppleIDAuthorizationScopes.email,
+                          AppleIDAuthorizationScopes.fullName,
+                        ],
+                      );
+                      await AuthRepo().signInWithGoogle(credential.userIdentifier!, context);
+                    } else {
+                      // EasyLoading.showError('Apple login will work on apple devises');
+                      EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
+                    }
+                  },
                   child: Container(
                     alignment: Alignment.center,
                     height: 48,
@@ -209,6 +180,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       title: Text(
                         lang.S.of(context).continueWithApple,
+                        //'Continue with Apple',
                         style: const TextStyle(color: kWhite, fontWeight: FontWeight.w500),
                       ),
                     ),
