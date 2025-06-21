@@ -21,37 +21,53 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  // Đăng nhập với tài khoản Google khác
   Future<User?> signInWithDifferentGoogleAccount() async {
-    final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
-    final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount?.authentication;
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
+      if (googleSignInAccount == null) {
+        EasyLoading.showError("Đăng nhập với Google thất bại hoặc bị hủy.");
+        return null; // Người dùng đã hủy đăng nhập
+      }
 
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleSignInAuthentication?.accessToken,
-      idToken: googleSignInAuthentication?.idToken,
-    );
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
 
-    final UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
 
-    final User? user = authResult.user;
+      final UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
+      final User? user = authResult.user;
 
-    return user;
+      return user;
+    } catch (e) {
+      EasyLoading.showError("Lỗi đăng nhập với Google: $e");
+      return null;
+    }
   }
 
+  // Đăng nhập với Google
   Future<UserCredential> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        EasyLoading.showError("Đăng nhập với Google thất bại hoặc bị hủy.");
+        return Future.error("User canceled the login");
+      }
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth?.accessToken,
-      idToken: googleAuth?.idToken,
-    );
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      EasyLoading.showError("Lỗi khi đăng nhập Google: $e");
+      return Future.error(e.toString());
+    }
   }
 
   @override
@@ -114,10 +130,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 const SizedBox(height: 13),
                 GestureDetector(
                   onTap: () async {
-                    // await signInWithGoogle();
+                    // Gọi hàm đăng nhập với tài khoản Google khác
                     User? user = await signInWithDifferentGoogleAccount();
                     if (user != null) {
-                      String email = user.email!;
+                      String email = user.email ?? 'default_email@example.com'; // Cải tiến khi email là null
                       await AuthRepo().signInWithGoogle(email, context);
                     }
                   },
@@ -150,15 +166,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 GestureDetector(
                   onTap: () async {
                     if (Platform.isIOS) {
-                      AuthorizationCredentialAppleID credential = await SignInWithApple.getAppleIDCredential(
-                        scopes: [
-                          AppleIDAuthorizationScopes.email,
-                          AppleIDAuthorizationScopes.fullName,
-                        ],
-                      );
-                      await AuthRepo().signInWithGoogle(credential.userIdentifier!, context);
+                      try {
+                        AuthorizationCredentialAppleID credential = await SignInWithApple.getAppleIDCredential(
+                          scopes: [
+                            AppleIDAuthorizationScopes.email,
+                            AppleIDAuthorizationScopes.fullName,
+                          ],
+                        );
+                        await AuthRepo().signInWithGoogle(credential.userIdentifier!, context);
+                      } catch (e) {
+                        EasyLoading.showError("Lỗi đăng nhập với Apple: $e");
+                      }
                     } else {
-                      // EasyLoading.showError('Apple login will work on apple devises');
                       EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
                     }
                   },
@@ -180,7 +199,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       title: Text(
                         lang.S.of(context).continueWithApple,
-                        //'Continue with Apple',
                         style: const TextStyle(color: kWhite, fontWeight: FontWeight.w500),
                       ),
                     ),
