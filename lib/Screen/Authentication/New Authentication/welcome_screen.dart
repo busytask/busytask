@@ -20,16 +20,20 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  // Đăng nhập với tài khoản Google khác
   Future<User?> signInWithDifferentGoogleAccount() async {
     try {
       final GoogleSignInAccount? googleSignInAccount = await GoogleSignIn().signIn();
       if (googleSignInAccount == null) {
-        EasyLoading.showError("Đăng nhập với Google thất bại hoặc bị hủy.");
+        EasyLoading.showError("Đăng nhập với Google bị hủy.");
         return null;
       }
 
-      final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+      final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount.authentication;
+
+      if (googleSignInAuthentication == null) {
+        EasyLoading.showError("Không thể lấy thông tin xác thực Google.");
+        return null;
+      }
 
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
@@ -37,25 +41,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       );
 
       final UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
-      final User? user = authResult.user;
-
-      return user;
+      return authResult.user;
     } catch (e) {
       EasyLoading.showError("Lỗi đăng nhập với Google: $e");
       return null;
     }
   }
 
-  // Đăng nhập với Google
-  Future<UserCredential> signInWithGoogle() async {
+  Future<UserCredential?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
-        EasyLoading.showError("Đăng nhập với Google thất bại hoặc bị hủy.");
-        return Future.error("User canceled the login");
+        EasyLoading.showError("Đăng nhập với Google bị hủy.");
+        return null;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+      if (googleAuth == null) {
+        EasyLoading.showError("Không thể lấy thông tin xác thực Google.");
+        return null;
+      }
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -64,12 +69,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
-      EasyLoading.showError("Lỗi khi đăng nhập Google: $e");
-      return Future.error(e.toString());
+      EasyLoading.showError("Lỗi đăng nhập Google: $e");
+      return null;
     }
   }
 
-  // Đăng nhập với Apple
   Future<void> signInWithApple() async {
     if (kIsWeb) {
       EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
@@ -86,9 +90,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         idToken: credential.identityToken,
         accessToken: credential.authorizationCode,
       );
-      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      // Optionally call AuthRepo if needed
-      await AuthRepo().signInWithApple(credential.userIdentifier!, context);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      if (userCredential.user != null) {
+        await AuthRepo().signInWithApple(credential.userIdentifier!, context);
+      }
     } catch (e) {
       EasyLoading.showError("Lỗi đăng nhập với Apple: $e");
     }
@@ -154,9 +159,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 const SizedBox(height: 13),
                 GestureDetector(
                   onTap: () async {
-                    User? user = await signInWithDifferentGoogleAccount();
+                    final user = await signInWithDifferentGoogleAccount();
                     if (user != null) {
-                      String email = user.email ?? 'default_email@example.com';
+                      final email = user.email ?? 'default_email@example.com';
                       await AuthRepo().signInWithGoogle(email, context);
                     }
                   },
@@ -196,7 +201,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                     child: ListTile(
                       visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-                     -FontWeight.w500),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                      leading: Image.asset(
+                        'images/apple_logo.png',
+                        height: 25,
+                        width: 25,
+                      ),
+                      title: Text(
+                        lang.S.of(context).continueWithApple,
+                        style: const TextStyle(color: kWhite, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
