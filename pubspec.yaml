@@ -48,14 +48,14 @@ dependencies:
   bootstrap_icons: ^1.8.1
   circular_countdown_timer: ^0.2.2
   in_app_review: ^2.0.4
-  share_plus: ^10.0.2
+  share_plus: ^11.0.0
   percent_indicator: ^4.0.1
   http: ^1.1.0
   flutter_riverpod: ^2.3.2
-  google_mobile_ads: ^5.0.0
+  google_mobile_ads: ^6.0.0
   startapp_sdk: ^1.0.1
   applovin_max: ^4.0.2
-  flutter_hooks: ^0.20.0
+  flutter_hooks: ^0.21.2
   quiver: ^3.2.1
 #  flutter_tapjoy: ^2.1.0
 #  flutter_user_agentx: ^1.2.4
@@ -92,7 +92,7 @@ dependencies:
   convex_bottom_bar: ^3.2.0
   water_drop_nav_bar: ^2.2.0+5
   intl:
-  sign_in_with_apple: ^6.0.0
+  sign_in_with_apple: ^7.0.1
   vungle:
     git:
       url: https://github.com/mdshakilmia22/Flutter-Plugin.git
