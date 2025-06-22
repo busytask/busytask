@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:cash_rocket/Repositories/authentication_repo.dart';
 import 'package:cash_rocket/Screen/Authentication/log_in.dart';
 import 'package:cash_rocket/constant%20app%20information/const_information.dart';
@@ -9,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-
 import '../../Constant Data/constant.dart';
+
 import '../../Constant Data/global_contanier.dart';
+import 'dart:io' show Platform;
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -158,8 +157,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       );
                       await AuthRepo().signInWithGoogle(credential.userIdentifier!, context);
                     } else {
-                      // EasyLoading.showError('Apple login will work on apple devises');
-                      EasyLoading.showError(lang.S.of(context).appleLoginWillWorkOnAppleDevises);
+                      EasyLoading.showError('Apple login will work on apple devises');
                     }
                   },
                   child: Container(
@@ -178,10 +176,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         height: 25,
                         width: 25,
                       ),
-                      title: Text(
-                        lang.S.of(context).continueWithApple,
-                        //'Continue with Apple',
-                        style: const TextStyle(color: kWhite, fontWeight: FontWeight.w500),
+                      title: const Text(
+                        'Continue with Apple',
+                        style: TextStyle(color: kWhite, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
